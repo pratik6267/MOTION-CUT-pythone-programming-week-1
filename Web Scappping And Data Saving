@@ -1,0 +1,36 @@
+python
+import requests
+from bs4 import BeautifulSoup
+import csv
+import json
+
+# Make a request to the website
+url = "https://www.example.com/weather"
+response = requests.get(url)
+
+# Parse the website content
+soup = BeautifulSoup(response.text, 'html.parser')
+
+# Find the data you want to scrape
+# For example, let's assume the temperature and humidity are located in two separate divs with the class 'data'
+# The first div contains the temperature, and the second div contains the humidity
+
+# Find all divs with the class 'data'
+data_divs = soup.find_all('div', class_='data')
+
+# Extract the temperature and humidity from the divs
+temperature = data_divs[0].text.strip()
+humidity = data_divs[1].text.strip()
+
+# Save the scraped data in a CSV file
+with open('weather_data.csv', 'w', newline='') as csvfile:
+    fieldnames = ['temperature', 'humidity']
+    writer = csv.DictWriter(csvfile, fieldnames=fieldnames)
+
+    writer.writeheader()
+    writer.writerow({'temperature': temperature, 'humidity': humidity})
+
+# Save the scraped data in a JSON file
+with open('weather_data.json', 'w') as jsonfile:
+    data = {'temperature': temperature, 'humidity': humidity}
+    json.dump(data, jsonfile)
